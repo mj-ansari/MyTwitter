@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<h1 class="py-3">Search Tweets & Users</h1>
+<form method="post">
+    {% csrf_token %}
+    <div class="mb-4">
+        <input type="text" class="form-control form-control" name="search" aria-describedby="searchId"
+            placeholder="Search Something here !!" required>
+    </div>
+    <button type="submit" class="btn btn-dark">Search</button>
+</form>
+<br>
+{% if search_tweet or search_user %}
+<h3>You Searched For : {{search}}</h3><br>
+{% for tweet in search_tweet %}
+<div class="alert alert-info" role="alert">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-1">
+                {% if tweet.user.profile.profile_image %}
+                <img class="rounded-circle" width=50 height=50 src="{{tweet.user.profile.profile_image.url}}"
+                    alt="{{profile.user.username}}">
+                {% else %}
+                <img class="rounded-circle" width=50 height=50 src="{% static 'images/No-User.png' %}"
+                    alt="{{profile.user.username}}">
+                {% endif %}
+            </div>
+            <div class="col-md-10">
+                {{tweet.body}}<br>
+                <small class="text-muted">
+                    ({{tweet.created_at}}) By @{{tweet.user.username | lower}} &nbsp;&nbsp;
+                    {{tweet.likes_count}} Likes
+                    {% if user in tweet.likes.all %}
+                    <a href="{% url 'tweet_like' tweet.id %}"><i class="fa-solid fa-heart" style="color:red"></i></a>
+                    {% else %}
+                    <a href="{% url 'tweet_like' tweet.id %}"><i class="fa-regular fa-heart" style="color:red"></i></a>
+                    {% endif %}
+                    &nbsp;&nbsp;
+                    <a href="{% url 'tweet_share' tweet.id %}">
+                        <i class="fa fa-share" style="color:grey"></i>
+                    </a>
+                </small>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+{% for user in search_user %}
+<div class="card mb-3" style="max-width: 540px;">
+    <div class="row g-0">
+        <div class="col-md-4">
+            {% if user.profile.profile_image %}
+            <img class="img-fluid rounded-start" width=200 src="{{user.profile.profile_image.url}}">
+            {% else %}
+            <img class="img-fluid rounded-start" width=200 src="{% static 'images/No-User.png' %}">
+            {% endif %}
+        </div>
+        <div class="col-md-8">
+            <div class="card-body">
+                <h5 class="card-title">{{user.profile.user.username}}</h5>
+                <p class="card-text"><a href="{% url 'profile' user.profile.user.id %}">@{{user.profile.user.username | lower}}</a></p>
+                <br />
+                <br />
+                <p class="card-text"><small class="text-body-secondary">Last updated:
+                        {{user.profile.date_modified}}</small></p>
+            </div>
+        </div>
+    </div>
+</div>
+<br /></br>
+{% endfor %}
+{% endif %}
+{% endblock content %}

@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block content %}
+{% if user.is_authenticated %}
+<div class="text-center p-3">
+    <h1>You Are Already Registered !</h1><br>
+    <a class="btn btn-secondary" href="{% url 'home' %}">Go To Home</a>
+</div>
+{% else %}
+<div class="col-md-6 offset-md-3">
+    <h1>Register</h1>
+    </br>
+    <form action="" method="post">
+        {% csrf_token %}
+        {{form.as_p}}
+        <br>
+        <button class="btn btn-dark" type="submit">Register</button>
+    </form>
+</div>
+{% endif %}
+{% endblock content %}
